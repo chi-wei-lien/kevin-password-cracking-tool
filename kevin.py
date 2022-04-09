@@ -32,13 +32,14 @@ if flags == "-D":
 elif flags == "-B":
   is_found = False
   chars = string.ascii_lowercase + string.digits
+  child = pexpect.spawn(login_command + '1234')
   for password_length in range(4):
     for guess in itertools.product(chars, repeat=password_length):
       guess = ''.join(guess)
       if guess == "":
         continue
       try:
-        child = pexpect.spawn(login_command + guess)
+        child.sendline(login_command + guess)
         i = child.expect('mysql> ')
         is_found = True
         print("[*] " + guess + " |  success")
