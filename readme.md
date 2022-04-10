@@ -2,7 +2,7 @@
 
 ## Watch the Video First!
 
-Video Link: \
+Video Link: https://www.youtube.com/watch?v=VnBirsGV5hM\
 In this video I covered how to do password cracking using dictionary attack and brute force attack 😈. Just like always, this video is for educational purposes. If you do any illegal stuff you will get arrested 🚓!
 
 ## Instalation
