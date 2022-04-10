@@ -18,9 +18,9 @@ except:
 
 if flags == "-D":
   file = open(filename, 'r')
-  passwords = file.readlines()
+  password_in_list = file.readline()
 
-  for password_in_list in passwords:
+  while password_in_list:
     password_in_list = password_in_list.strip()
     try:
       conn = mysql.connector.connect(user='root', host='127.0.0.1', password=password_in_list)
@@ -28,7 +28,10 @@ if flags == "-D":
       break
     except mysql.connector.Error as err:
       print("[*] " + password_in_list + " |  fail")
+      password_in_list = file.readline()
       continue
+
+    
 
   file.close()
 elif flags == "-B":
